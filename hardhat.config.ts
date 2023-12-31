@@ -7,8 +7,8 @@ import "@openzeppelin/hardhat-upgrades";
 import "hardhat-deploy";
 
 // Tasks
-import "./src/deploy-contract";
-import "./src/upgrade-contract";
+import "./src/deploy/deploy-contract";
+import "./src/deploy/upgrade-contract";
 
 const config: HardhatUserConfig = {
   solidity: {
