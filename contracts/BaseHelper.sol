@@ -4,8 +4,10 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 abstract contract BaseHelper is
+    Initializable,
     AccessControlUpgradeable,
     PausableUpgradeable,
     ReentrancyGuardUpgradeable
@@ -24,11 +26,6 @@ abstract contract BaseHelper is
 
     /** FUNCTIONS **/
 
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
-
     function _baseInitialize(address initialOwner) internal onlyInitializing {
         __Pausable_init();
         __AccessControl_init();
@@ -38,6 +35,17 @@ abstract contract BaseHelper is
         _grantRole(DEFAULT_ADMIN_ROLE, initialOwner);
         // Grant pauser role to initialOwner
         _grantRole(PAUSER_ROLE, initialOwner);
+        _grantRole(OWNER_ROLE, initialOwner);
+        _grantRole(MINTER_ROLE, initialOwner);
+        _grantRole(ADMIN_ROLE, initialOwner);
+    }
+
+    function pause() public onlyRole(PAUSER_ROLE) {
+        _pause();
+    }
+
+    function unpause() public onlyRole(PAUSER_ROLE) {
+        _unpause();
     }
 
     // The gap is needed to avoid overwriting storage variables in future upgrades

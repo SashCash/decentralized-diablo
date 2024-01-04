@@ -14,6 +14,8 @@ contract CharacterNFT is ERC721, AccessControl {
     /** VARIABLES **/
 
     mapping(uint256 => string) public characterClassNames;
+    mapping(uint256 => string) public characterClassImages;
+    mapping(uint256 => string) public characterClassDescriptions;
     address public characterNFTManagerContract;
     address public tokenUriContract;
 
@@ -104,6 +106,26 @@ contract CharacterNFT is ERC721, AccessControl {
         string memory classNames
     ) public onlyRole(OWNER_ROLE) {
         characterClassNames[classEnumValue] = classNames;
+    }
+
+    /**
+     * @dev Update the class images
+     */
+    function updateClassImages(
+        uint256 classEnumValue,
+        string memory classImages
+    ) public onlyRole(OWNER_ROLE) {
+        characterClassImages[classEnumValue] = classImages;
+    }
+
+    /**
+     * @dev Update the class descriptions
+     */
+    function updateClassDescriptions(
+        uint256 classEnumValue,
+        string memory classDescriptions
+    ) public onlyRole(OWNER_ROLE) {
+        characterClassDescriptions[classEnumValue] = classDescriptions;
     }
 
     /**

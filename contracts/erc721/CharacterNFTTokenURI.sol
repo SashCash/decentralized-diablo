@@ -60,20 +60,18 @@ contract CharacterNFTTokenURI is BaseHelper {
             if (i == attributes.length - 1) {
                 attributesString = string.concat(
                     attributesString,
-                    '{"trait_type":"',
-                    attributes[i].name,
-                    '","value":"',
-                    Strings.toString(attributes[i].value),
-                    '"}'
+                    _addAttribute(
+                        attributes[i].name,
+                        Strings.toString(attributes[i].value)
+                    )
                 );
             } else {
                 attributesString = string.concat(
                     attributesString,
-                    '{"trait_type":"',
-                    attributes[i].name,
-                    '","value":"',
-                    Strings.toString(attributes[i].value),
-                    '"}',
+                    _addAttribute(
+                        attributes[i].name,
+                        Strings.toString(attributes[i].value)
+                    ),
                     ","
                 );
             }
@@ -84,17 +82,14 @@ contract CharacterNFTTokenURI is BaseHelper {
             CharacterNFT(characterNFT).tokenName(tokenId),
             '",',
             '"description":"',
-            "A paladin character from Diablo2",
+            CharacterNFT(characterNFT).characterClassDescriptions(tokenId),
             '",',
             '"image":"',
-            "https://www.purediablo.com/wp-content/uploads/2021/02/D2R_Paladin-scaled.jpg",
+            CharacterNFT(characterNFT).characterClassImages(tokenId),
             '",',
             '"external_url":"',
-            "https://diablo.fandom.com/wiki/Paladin",
-            '",',
-            '"attributes":[',
-            attributesString,
-            "]"
+            "https://diablo.fandom.com/wiki/Diablo_II",
+            '"'
         );
         string memory fullOpenSeaMetadata = string.concat(
             "{",
@@ -108,6 +103,22 @@ contract CharacterNFTTokenURI is BaseHelper {
             string.concat(
                 "data:application/json;base64,",
                 Base64.encode(bytes(fullOpenSeaMetadata))
+            );
+    }
+
+    function _addAttribute(
+        string memory key,
+        string memory value
+    ) internal pure returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    '{"trait_type": "',
+                    key,
+                    '", "value": "',
+                    value,
+                    '"}'
+                )
             );
     }
 }
