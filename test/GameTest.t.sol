@@ -22,6 +22,8 @@ contract GameTest is Test {
     // Accounts
     address public owner;
 
+    address public admin;
+
     // Roles
     bytes32 public constant OWNER_ROLE = keccak256("OWNER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
