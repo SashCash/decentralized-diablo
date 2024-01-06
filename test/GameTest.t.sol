@@ -152,6 +152,9 @@ contract GameTest is Test {
         assertEq(erc721CharacterClassImages, expected);
     }
 
+    /**
+     * @dev Test Addresses are not address(0)
+     */
     function testFailContractAddress() public {
         assertEq(address(characterNFT), address(0));
         assertEq(address(gold), address(0));
