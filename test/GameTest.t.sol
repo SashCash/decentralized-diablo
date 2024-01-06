@@ -116,8 +116,8 @@ contract GameTest is Test {
         address tokenOwner = characterNFT.ownerOf(expectedTokenId);
         assertEq(tokenOwner, owner);
         characterNFT.burn(expectedTokenId);
-        tokenOwner = characterNFT.ownerOf(expectedTokenId);
-        assertEq(tokenOwner, address(0));
+        uint256 balanceOfOwner = characterNFT.balanceOf(owner);
+        assertEq(balanceOfOwner, 0);
     }
 
     /**
@@ -150,6 +150,15 @@ contract GameTest is Test {
         string
             memory expected = "https://www.purediablo.com/wp-content/uploads/2021/02/D2R_Barbarian-scaled.jpg";
         assertEq(erc721CharacterClassImages, expected);
+    }
+
+    function testFailContractAddress() public {
+        assertEq(address(characterNFT), address(0));
+        assertEq(address(gold), address(0));
+        assertEq(address(characterNFTManager), address(0));
+        assertEq(address(characterNFTTokenURI), address(0));
+        assertEq(address(itemNFT), address(0));
+        assertEq(address(itemNFTTokenURI), address(0));
     }
 
     /**
