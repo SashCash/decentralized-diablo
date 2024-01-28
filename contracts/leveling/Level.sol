@@ -7,6 +7,7 @@ import "../BaseHelper.sol";
 contract Level is BaseHelper {
     /** STRUCTS **/
 
+    // Packed struct
     struct LevelData {
         uint128 level;
         uint128 xp;
