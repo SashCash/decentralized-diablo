@@ -13,9 +13,13 @@ contract CharacterNFT is ERC721, AccessControl {
 
     /** VARIABLES **/
 
-    mapping(uint256 => string) public characterClassNames;
-    mapping(uint256 => string) public characterClassImages;
-    mapping(uint256 => string) public characterClassDescriptions;
+    struct CharacterData {
+        string className;
+        string classImage;
+        string classDescription;
+    }
+
+    mapping(uint256 => CharacterData) public classIdToCharacterData;
     address public characterNFTManagerContract;
     address public tokenUriContract;
 
@@ -40,13 +44,13 @@ contract CharacterNFT is ERC721, AccessControl {
         _grantRole(MINTER_ROLE, msg.sender);
         _grantRole(BURNER_ROLE, msg.sender);
 
-        characterClassNames[1] = "BARBARIAN";
-        characterClassNames[2] = "NECROMANCER";
-        characterClassNames[3] = "PALADIN";
-        characterClassNames[4] = "SORCERESS";
-        characterClassNames[5] = "AMAZON";
-        characterClassNames[6] = "ASSASSIN";
-        characterClassNames[7] = "DRUID";
+        classIdToCharacterData[1].className = "BARBARIAN";
+        classIdToCharacterData[2].className = "NECROMANCER";
+        classIdToCharacterData[3].className = "PALADIN";
+        classIdToCharacterData[4].className = "SORCERESS";
+        classIdToCharacterData[5].className = "AMAZON";
+        classIdToCharacterData[6].className = "ASSASSIN";
+        classIdToCharacterData[7].className = "DRUID";
     }
 
     function supportsInterface(
@@ -81,7 +85,8 @@ contract CharacterNFT is ERC721, AccessControl {
             CharacterNFTManager(characterNFTManagerContract)
                 .tokenIdToCharacterClass(tokenId)
         );
-        string memory className = characterClassNames[classEnumValue];
+        string memory className = classIdToCharacterData[classEnumValue]
+            .className;
         return string(abi.encodePacked(className, " #", tokenId.toString()));
     }
 
@@ -105,7 +110,7 @@ contract CharacterNFT is ERC721, AccessControl {
         uint256 classEnumValue,
         string memory classNames
     ) public onlyRole(OWNER_ROLE) {
-        characterClassNames[classEnumValue] = classNames;
+        classIdToCharacterData[classEnumValue].className = classNames;
     }
 
     /**
@@ -115,7 +120,7 @@ contract CharacterNFT is ERC721, AccessControl {
         uint256 classEnumValue,
         string memory classImages
     ) public onlyRole(OWNER_ROLE) {
-        characterClassImages[classEnumValue] = classImages;
+        classIdToCharacterData[classEnumValue].classImage = classImages;
     }
 
     /**
@@ -125,7 +130,8 @@ contract CharacterNFT is ERC721, AccessControl {
         uint256 classEnumValue,
         string memory classDescriptions
     ) public onlyRole(OWNER_ROLE) {
-        characterClassDescriptions[classEnumValue] = classDescriptions;
+        classIdToCharacterData[classEnumValue]
+            .classDescription = classDescriptions;
     }
 
     /**
@@ -146,5 +152,33 @@ contract CharacterNFT is ERC721, AccessControl {
             revert InvalidValues();
         }
         _burn(tokenId);
+    }
+
+    function getClassDescription(
+        uint256 tokenId
+    ) public view returns (string memory) {
+        uint256 classEnumValue = uint256(
+            CharacterNFTManager(characterNFTManagerContract)
+                .tokenIdToCharacterClass(tokenId)
+        );
+        return classIdToCharacterData[classEnumValue].classDescription;
+    }
+
+    function getClassImage(
+        uint256 tokenId
+    ) public view returns (string memory) {
+        uint256 classEnumValue = uint256(
+            CharacterNFTManager(characterNFTManagerContract)
+                .tokenIdToCharacterClass(tokenId)
+        );
+        return classIdToCharacterData[classEnumValue].classImage;
+    }
+
+    function getClassName(uint256 tokenId) public view returns (string memory) {
+        uint256 classEnumValue = uint256(
+            CharacterNFTManager(characterNFTManagerContract)
+                .tokenIdToCharacterClass(tokenId)
+        );
+        return classIdToCharacterData[classEnumValue].className;
     }
 }
