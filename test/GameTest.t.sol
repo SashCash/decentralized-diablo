@@ -87,6 +87,68 @@ contract GameTest is Test {
             uint256(CharacterNFTManager.CharacterClass.DRUID),
             "https://www.purediablo.com/wp-content/uploads/2021/02/D2R_Druid-scaled.jpg"
         );
+
+        // setup itemNFT attributes
+        itemNFTTokenURI.setItemAttributes(
+            1,
+            ItemNFTTokenURI.ItemAttributes(
+                "Sigons Visor",
+                "Sigons Complete Steel",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/great_helm_armor_diablo2_wiki_guide_196px.png",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/great_helm_armor_diablo2_wiki_guide_196px.png",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/great_helm_armor_diablo2_wiki_guide_196px.png"
+            )
+        );
+        itemNFTTokenURI.setItemAttributes(
+            2,
+            ItemNFTTokenURI.ItemAttributes(
+                "Sigons Guard",
+                "Sigons Complete Steel",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/bverrit_keep_1_diablo2_wiki_guide_196x294px.png",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/bverrit_keep_1_diablo2_wiki_guide_196x294px.png",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/bverrit_keep_1_diablo2_wiki_guide_196x294px.png"
+            )
+        );
+        itemNFTTokenURI.setItemAttributes(
+            3,
+            ItemNFTTokenURI.ItemAttributes(
+                "Sigons Wrap",
+                "Sigons Complete Steel",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/plated_belt_armor_diablo2_wiki_guide_196px.png",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/plated_belt_armor_diablo2_wiki_guide_196px.png",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/plated_belt_armor_diablo2_wiki_guide_196px.png"
+            )
+        );
+        itemNFTTokenURI.setItemAttributes(
+            4,
+            ItemNFTTokenURI.ItemAttributes(
+                "Sigons Sabot",
+                "Sigons Complete Steel",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/plate_boots_diablo2_wiki_guide_196px.png",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/plate_boots_diablo2_wiki_guide_196px.png",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/plate_boots_diablo2_wiki_guide_196px.png"
+            )
+        );
+        itemNFTTokenURI.setItemAttributes(
+            5,
+            ItemNFTTokenURI.ItemAttributes(
+                "Sigons Gage",
+                "Sigons Complete Steel",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/gauntlets_diablo2_wiki_guide_196px.png",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/gauntlets_diablo2_wiki_guide_196px.png",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/gauntlets_diablo2_wiki_guide_196px.png"
+            )
+        );
+        itemNFTTokenURI.setItemAttributes(
+            6,
+            ItemNFTTokenURI.ItemAttributes(
+                "Sigons Shelter",
+                "Sigons Complete Steel",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/gothic_plate_armor_diablo2_wiki_guide_196px.png",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/gothic_plate_armor_diablo2_wiki_guide_196px.png",
+                "https://diablo2.wiki.fextralife.com/file/Diablo-2/gothic_plate_armor_diablo2_wiki_guide_196px.png"
+            )
+        );
     }
 
     /**
@@ -175,8 +237,24 @@ contract GameTest is Test {
     //     );
     //     string memory erc721TokenURI = characterNFT.tokenURI(1);
     //     string memory expected = "test";
-    //     console.log("token URI: ", erc721TokenURI);
+    //     console.log("erc721 token URI: ", erc721TokenURI);
     //     assertEq(erc721TokenURI, expected);
+    // }
+
+    /**
+     * @dev Test ItemNFTTokenURI.uri()
+     */
+    // function testERC71155TokenURI() public {
+    //     _mintNft(
+    //         owner,
+    //         1,
+    //         uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+    //     );
+    //     string memory erc1155TokenURI = itemNFTTokenURI.uri(1);
+    //     string
+    //         memory expected = "data:application/json;base64,eyJuYW1lIjogIkl0ZW0gIzEiLCJpbWFnZSI6ICJodHRwczovL2RpYWJsbzIud2lraS5mZXh0cmFsaWZlLmNvbS9maWxlL0RpYWJsby0yL2dyZWF0X2hlbG1fYXJtb3JfZGlhYmxvMl93aWtpX2d1aWRlXzE5NnB4LnBuZyIsImRlc2NyaXB0aW9uIjogIkQySXRlbSBpcyBhIGNvbGxlY3Rpb24gb2YgaXRlbXMgZnJvbSB0aGUgZ2FtZSBEaWFibG8gMiIsICJhdHRyaWJ1dGVzIjogW3sidHJhaXRfdHlwZSI6ICJuYW1lIiwgInZhbHVlIjogIlNpZ29ucyBWaXNvciJ9LHsidHJhaXRfdHlwZSI6ICJkZXNjcmlwdGlvbiIsICJ2YWx1ZSI6ICJTaWdvbnMgQ29tcGxldGUgU3RlZWwifSx7InRyYWl0X3R5cGUiOiAiaW1hZ2UiLCAidmFsdWUiOiAiaHR0cHM6Ly9kaWFibG8yLndpa2kuZmV4dHJhbGlmZS5jb20vZmlsZS9EaWFibG8tMi9ncmVhdF9oZWxtX2FybW9yX2RpYWJsbzJfd2lraV9ndWlkZV8xOTZweC5wbmcifSx7InRyYWl0X3R5cGUiOiAiZXh0ZXJuYWxfdXJsIiwgInZhbHVlIjogImh0dHBzOi8vZGlhYmxvMi53aWtpLmZleHRyYWxpZmUuY29tL2ZpbGUvRGlhYmxvLTIvZ3JlYXRfaGVsbV9hcm1vcl9kaWFibG8yX3dpa2lfZ3VpZGVfMTk2cHgucG5nIn0seyJ0cmFpdF90eXBlIjogImFuaW1hdGlvbl91cmwiLCAidmFsdWUiOiAiaHR0cHM6Ly9kaWFibG8yLndpa2kuZmV4dHJhbGlmZS5jb20vZmlsZS9EaWFibG8tMi9ncmVhdF9oZWxtX2FybW9yX2RpYWJsbzJfd2lraV9ndWlkZV8xOTZweC5wbmcifV19";
+    //     console.log("erc1155 token URI: ", erc1155TokenURI);
+    //     assertEq(erc1155TokenURI, expected);
     // }
 
     /**
