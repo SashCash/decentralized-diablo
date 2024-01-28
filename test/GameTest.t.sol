@@ -9,6 +9,7 @@ import {CharacterNFTManager} from "../contracts/erc721/CharacterNFTManager.sol";
 import {CharacterNFTTokenURI} from "../contracts/erc721/CharacterNFTTokenURI.sol";
 import {ItemNFT} from "../contracts/erc1155/ItemNFT.sol";
 import {ItemNFTTokenURI} from "../contracts/erc1155/ItemNFTTokenURI.sol";
+import {Level} from "../contracts/leveling/Level.sol";
 
 contract GameTest is Test {
     // Contracts
@@ -18,6 +19,7 @@ contract GameTest is Test {
     CharacterNFTTokenURI public characterNFTTokenURI;
     ItemNFT public itemNFT;
     ItemNFTTokenURI public itemNFTTokenURI;
+    Level public levelContract;
 
     // Accounts
     address public owner;
@@ -30,6 +32,7 @@ contract GameTest is Test {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
+    bytes32 public constant UTILITY_ROLE = keccak256("UTILITY_ROLE");
 
     function setUp() public {
         owner = msg.sender;
@@ -43,10 +46,13 @@ contract GameTest is Test {
         // ERC1155 contracts
         itemNFT = new ItemNFT();
         itemNFTTokenURI = new ItemNFTTokenURI();
+        // Utility contracts
+        levelContract = new Level();
         // Initialize upgradeables
         characterNFTManager.initialize(owner);
         characterNFTTokenURI.initialize(owner);
         itemNFTTokenURI.initialize(owner);
+        levelContract.initialize(owner);
 
         // Contract setup and connections
         characterNFT.setCharacterNFTManager(address(characterNFTManager));
@@ -54,6 +60,7 @@ contract GameTest is Test {
         characterNFTManager.setCharacterNFT(address(characterNFT));
         characterNFTTokenURI.setCharacterNFT(address(characterNFT));
         itemNFT.setItemNFTTokenURI(address(itemNFTTokenURI));
+        levelContract.setCharacterNFT(address(characterNFT));
 
         // Set up roles
         characterNFT.grantRole(MINTER_ROLE, address(characterNFTManager));
@@ -256,6 +263,127 @@ contract GameTest is Test {
     //     console.log("erc1155 token URI: ", erc1155TokenURI);
     //     assertEq(erc1155TokenURI, expected);
     // }
+
+    /**
+     * @dev Test that base Xp and Level are zero and one respectively
+     */
+    function testLevelAndXpBase() public {
+        _mintNft(
+            owner,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        uint256 tokenLevel = levelContract.getTokenLevel(1);
+        assertEq(tokenLevel, 1);
+        uint256 tokenXp = levelContract.getTokenXp(1);
+        assertEq(tokenXp, 0);
+    }
+
+    function testLevelAndXpBaseGrantedStillLevelOne() public {
+        _mintNft(
+            owner,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        // Test base level and xp
+        uint256 tokenLevel = levelContract.getTokenLevel(1);
+        assertEq(tokenLevel, 1);
+        uint256 tokenXp = levelContract.getTokenXp(1);
+        assertEq(tokenXp, 0);
+        // Grant 50 xp, this should result in still level 1 but with 50 xp
+        levelContract.gainExperience(1, 50);
+        tokenLevel = levelContract.getTokenLevel(1);
+        assertEq(tokenLevel, 1);
+        tokenXp = levelContract.getTokenXp(1);
+        assertEq(tokenXp, 50);
+    }
+
+    function testLevelAndXpBaseGrantedPastLevelOne() public {
+        _mintNft(
+            owner,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        // Test base level and xp
+        uint256 tokenLevel = levelContract.getTokenLevel(1);
+        assertEq(tokenLevel, 1);
+        uint256 tokenXp = levelContract.getTokenXp(1);
+        assertEq(tokenXp, 0);
+        // Grant 50 xp, this should result in still level 1 but with 50 xp
+        levelContract.gainExperience(1, 50);
+        tokenLevel = levelContract.getTokenLevel(1);
+        assertEq(tokenLevel, 1);
+        tokenXp = levelContract.getTokenXp(1);
+        assertEq(tokenXp, 50);
+        // Grant 50 more xp, this should result in level 2 with 100 xp
+        levelContract.gainExperience(1, 50);
+        tokenLevel = levelContract.getTokenLevel(1);
+        assertEq(tokenLevel, 2);
+        tokenXp = levelContract.getTokenXp(1);
+        assertEq(tokenXp, 100);
+    }
+
+    function testLevelAndXpToLevelThree() public {
+        _mintNft(
+            owner,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        // Test base level and xp
+        uint256 tokenLevel = levelContract.getTokenLevel(1);
+        assertEq(tokenLevel, 1);
+        uint256 tokenXp = levelContract.getTokenXp(1);
+        assertEq(tokenXp, 0);
+        // Grant 100 xp, this should result in level 2 with 100 xp
+        levelContract.gainExperience(1, 100);
+        tokenLevel = levelContract.getTokenLevel(1);
+        assertEq(tokenLevel, 2);
+        tokenXp = levelContract.getTokenXp(1);
+        assertEq(tokenXp, 100);
+        // Grant 100 more xp, this should result in level 3 with 200 xp
+        levelContract.gainExperience(1, 100);
+        tokenLevel = levelContract.getTokenLevel(1);
+        assertEq(tokenLevel, 3);
+        tokenXp = levelContract.getTokenXp(1);
+        assertEq(tokenXp, 200);
+    }
+
+    function testLevelAndXpToMaxLevelTen() public {
+        _mintNft(
+            owner,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        // Test base level and xp
+        uint256 tokenLevel = levelContract.getTokenLevel(1);
+        assertEq(tokenLevel, 1);
+        uint256 tokenXp = levelContract.getTokenXp(1);
+        assertEq(tokenXp, 0);
+        // Grant 1000 xp, this should result in level 10 with 1000 xp
+        levelContract.gainExperience(1, 1000);
+        tokenLevel = levelContract.getTokenLevel(1);
+        assertEq(tokenLevel, 10);
+        tokenXp = levelContract.getTokenXp(1);
+        assertEq(tokenXp, 1000);
+    }
+
+    /**
+     * @dev Test user cannot go past level 10
+     */
+    function testFailLevelAndXpPastLevelTen() public {
+        _mintNft(
+            owner,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        // Test base level and xp
+        uint256 tokenLevel = levelContract.getTokenLevel(1);
+        assertEq(tokenLevel, 1);
+        uint256 tokenXp = levelContract.getTokenXp(1);
+        assertEq(tokenXp, 0);
+        // Grant 1001 xp, this will result in surpassing level 10
+        levelContract.gainExperience(1, 1001);
+    }
 
     /**
      * @dev Internal helper to mint nfts
