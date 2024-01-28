@@ -13,3 +13,11 @@
 ## ERC20 Token for In-game Gold currency
 
 #### Mintable/Burnable only by allowed parties
+
+## Level contract
+
+#### Gaming utility contract for NFT leveling
+
+## SkillTree contract
+
+#### Gaming utility contract for NFT SkillTree
