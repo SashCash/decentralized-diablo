@@ -10,6 +10,7 @@ import {CharacterNFTTokenURI} from "../contracts/erc721/CharacterNFTTokenURI.sol
 import {ItemNFT} from "../contracts/erc1155/ItemNFT.sol";
 import {ItemNFTTokenURI} from "../contracts/erc1155/ItemNFTTokenURI.sol";
 import {Level} from "../contracts/leveling/Level.sol";
+import {SkillTree} from "../contracts/skills/SkillTree.sol";
 
 contract GameTest is Test {
     // Contracts
@@ -20,6 +21,7 @@ contract GameTest is Test {
     ItemNFT public itemNFT;
     ItemNFTTokenURI public itemNFTTokenURI;
     Level public levelContract;
+    SkillTree public skillContract;
 
     // Accounts
     address public owner;
@@ -48,11 +50,13 @@ contract GameTest is Test {
         itemNFTTokenURI = new ItemNFTTokenURI();
         // Utility contracts
         levelContract = new Level();
+        skillContract = new SkillTree();
         // Initialize upgradeables
         characterNFTManager.initialize(owner);
         characterNFTTokenURI.initialize(owner);
         itemNFTTokenURI.initialize(owner);
         levelContract.initialize(owner);
+        skillContract.initialize(owner);
 
         // Contract setup and connections
         characterNFT.setCharacterNFTManager(address(characterNFTManager));
@@ -61,6 +65,8 @@ contract GameTest is Test {
         characterNFTTokenURI.setCharacterNFT(address(characterNFT));
         itemNFT.setItemNFTTokenURI(address(itemNFTTokenURI));
         levelContract.setCharacterNFT(address(characterNFT));
+        skillContract.setCharacterNFTManager(address(characterNFTManager));
+        skillContract.setLevelContract(address(levelContract));
 
         // Set up roles
         characterNFT.grantRole(MINTER_ROLE, address(characterNFTManager));
@@ -212,10 +218,9 @@ contract GameTest is Test {
             1,
             uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
         );
-        string memory erc721CharacterClassImages = characterNFT
-            .characterClassImages(
-                uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
-            );
+        string memory erc721CharacterClassImages = characterNFT.getClassImage(
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
         string
             memory expected = "https://www.purediablo.com/wp-content/uploads/2021/02/D2R_Barbarian-scaled.jpg";
         assertEq(erc721CharacterClassImages, expected);
@@ -383,6 +388,53 @@ contract GameTest is Test {
         assertEq(tokenXp, 0);
         // Grant 1001 xp, this will result in surpassing level 10
         levelContract.gainExperience(1, 1001);
+    }
+
+    /**
+     * @dev Test user at level 2 can use attacks for level 1 and level 2
+     */
+    function testCanUseSkill() public {
+        _mintNft(
+            owner,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        // Grant 100 xp, this should result in level 2 with 100 xp
+        levelContract.gainExperience(1, 100);
+        uint256 tokenLevel = levelContract.getTokenLevel(1);
+        assertEq(tokenLevel, 2);
+        uint256 tokenXp = levelContract.getTokenXp(1);
+        assertEq(tokenXp, 100);
+        uint256 bashAttackId = 1;
+        skillContract.canUseSkill(1, bashAttackId);
+        uint256 shoutAttackId = 2;
+        skillContract.canUseSkill(1, shoutAttackId);
+    }
+
+    /**
+     * @dev Test base case, user can use attack at level 1
+     */
+    function testCanUseSkillBase() public {
+        _mintNft(
+            owner,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        uint256 bashAttackId = 1;
+        skillContract.canUseSkill(1, bashAttackId);
+    }
+
+    /**
+     * @dev Test fail user cannot use attack higher than their level
+     */
+    function testFailCanUseSkillNotAllowed() public {
+        _mintNft(
+            owner,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        uint256 shoutAttackId = 2;
+        skillContract.canUseSkill(1, shoutAttackId);
     }
 
     /**
