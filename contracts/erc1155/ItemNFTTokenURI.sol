@@ -38,7 +38,7 @@ contract ItemNFTTokenURI is BaseHelper {
         _baseInitialize(initialOwner);
     }
 
-    function setItemURI(
+    function setItemAttributes(
         uint256 itemId,
         ItemAttributes memory itemAttributes
     ) public onlyRole(ADMIN_ROLE) {
@@ -61,31 +61,35 @@ contract ItemNFTTokenURI is BaseHelper {
         attributesString = string(
             abi.encodePacked(
                 attributesString,
-                _addAttribute("name", itemAttributes.name)
+                _addAttribute("name", itemAttributes.name, false)
             )
         );
         attributesString = string(
             abi.encodePacked(
                 attributesString,
-                _addAttribute("description", itemAttributes.description)
+                _addAttribute("description", itemAttributes.description, false)
             )
         );
         attributesString = string(
             abi.encodePacked(
                 attributesString,
-                _addAttribute("image", itemAttributes.image)
+                _addAttribute("image", itemAttributes.image, false)
             )
         );
         attributesString = string(
             abi.encodePacked(
                 attributesString,
-                _addAttribute("external_url", itemAttributes.externalUrl)
+                _addAttribute("external_url", itemAttributes.externalUrl, false)
             )
         );
         attributesString = string(
             abi.encodePacked(
                 attributesString,
-                _addAttribute("animation_url", itemAttributes.animationUrl)
+                _addAttribute(
+                    "animation_url",
+                    itemAttributes.animationUrl,
+                    true
+                )
             )
         );
 
@@ -95,11 +99,12 @@ contract ItemNFTTokenURI is BaseHelper {
                     abi.encodePacked(
                         '{"name": "Item #',
                         tokenId.toString(),
-                        '", "description": "D2Item is a collection of items from the game Diablo 2", "attributes": [',
-                        attributesString,
-                        '], "image": "',
+                        '","image": "',
                         itemAttributes.image,
-                        '"}'
+                        '",',
+                        '"description": "D2Item is a collection of items from the game Diablo 2", "attributes": [',
+                        attributesString,
+                        "]}"
                     )
                 )
             )
@@ -109,7 +114,8 @@ contract ItemNFTTokenURI is BaseHelper {
 
     function _addAttribute(
         string memory key,
-        string memory value
+        string memory value,
+        bool isLast
     ) internal pure returns (string memory) {
         return
             string(
@@ -118,7 +124,8 @@ contract ItemNFTTokenURI is BaseHelper {
                     key,
                     '", "value": "',
                     value,
-                    '"}'
+                    '"}',
+                    isLast ? "" : ","
                 )
             );
     }
