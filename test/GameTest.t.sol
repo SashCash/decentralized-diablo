@@ -12,6 +12,7 @@ import {ItemNFTTokenURI} from "../contracts/erc1155/ItemNFTTokenURI.sol";
 import {Level} from "../contracts/leveling/Level.sol";
 import {SkillTree} from "../contracts/skills/SkillTree.sol";
 import {Akara} from "../contracts/merchant/Akara.sol";
+import {Monster, Loot, MonsterData} from "../contracts/monster/Monster.sol";
 
 contract GameTest is Test {
     // Contracts
@@ -24,6 +25,7 @@ contract GameTest is Test {
     Level public levelContract;
     SkillTree public skillContract;
     Akara public akara;
+    Monster public monster;
 
     // Accounts
     address public owner;
@@ -34,7 +36,7 @@ contract GameTest is Test {
 
     address public playerOne;
 
-    // Constants
+    // Item Constants
     uint256 constant SIGONS_VISOR = 1;
     uint256 constant SIGONS_GUARD = 2;
     uint256 constant SIGONS_WRAP = 3;
@@ -42,12 +44,18 @@ contract GameTest is Test {
     uint256 constant SIGONS_GAGE = 5;
     uint256 constant SIGONS_SHELTER = 6;
 
-    // reserved for future use
-
     uint256 constant HEALTH_POT_ID = 100;
     uint256 constant MANA_POT_ID = 101;
     uint256 constant STAMINA_POT_ID = 102;
     uint256 constant REJUVINATION_POT_ID = 103;
+
+    uint256 constant GULL_DAGGER = 200;
+
+    // Monster and Boss Constants
+    uint256 constant ZOMBIE = 1;
+    uint256 constant SKELETON = 2;
+    uint256 constant FALLEN = 3;
+    uint256 constant ANDARIEL = 4;
 
     // Roles
     bytes32 public constant OWNER_ROLE = keccak256("OWNER_ROLE");
@@ -87,6 +95,7 @@ contract GameTest is Test {
         levelContract = new Level();
         skillContract = new SkillTree();
         akara = new Akara();
+        monster = new Monster();
         // Initialize upgradeables
         characterNFTManager.initialize(owner);
         characterNFTTokenURI.initialize(owner);
@@ -94,6 +103,7 @@ contract GameTest is Test {
         levelContract.initialize(owner);
         skillContract.initialize(owner);
         akara.initialize(owner);
+        monster.initialize(owner);
 
         // Contract setup and connections
 
@@ -114,10 +124,18 @@ contract GameTest is Test {
         akara.setGoldTokenAddress(address(gold));
         akara.setItemNFTAddress(address(itemNFT));
         akara.setBank(bank);
+        // Monster setup
+        monster.setItemNFT(address(itemNFT));
+        monster.setGoldAddress(address(gold));
+        monster.setCharacterNFT(address(characterNFT));
+        monster.setLevelContractAddress(address(levelContract));
 
         // Set up roles
         characterNFT.grantRole(MINTER_ROLE, address(characterNFTManager));
         itemNFT.grantRole(MINTER_ROLE, address(akara));
+        itemNFT.grantRole(MINTER_ROLE, address(monster));
+        gold.grantRole(MINTER_ROLE, address(monster));
+        levelContract.grantRole(UTILITY_ROLE, address(monster));
 
         // Setup items
         itemNFT.setItemData(SIGONS_VISOR, 10, false, true);
@@ -130,6 +148,7 @@ contract GameTest is Test {
         itemNFT.setItemData(MANA_POT_ID, 100000, true, true);
         itemNFT.setItemData(STAMINA_POT_ID, 100000, true, true);
         itemNFT.setItemData(REJUVINATION_POT_ID, 100000, true, true);
+        itemNFT.setItemData(GULL_DAGGER, 100000, true, true);
 
         // setup characterNFT class images
         characterNFT.updateClassImages(
@@ -232,7 +251,45 @@ contract GameTest is Test {
         akara.setItemPrice(STAMINA_POT_ID, 20);
         // Rejuvination Pot cost 30 gold
         akara.setItemPrice(REJUVINATION_POT_ID, 30);
+
+        // Setup Monsters and their loot, xp rewarded, min level required, and daily limit allowed
+
+        // Zombies require at least level 1 to battle, reward 5 xp, have a daily limit of 10, and reward 155 gold
+        Loot[] memory zombieLoot = new Loot[](1);
+        zombieLoot[0] = Loot(address(gold), 0, 155);
+        monster.setMonsterData(ZOMBIE, 1, 5, 10, zombieLoot);
+        // Skeletons require at least level 2 to battle, reward 10 xp, have a daily limit of 11, and reward 255 gold
+        Loot[] memory skeletonLoot = new Loot[](1);
+        skeletonLoot[0] = Loot(address(gold), 0, 255);
+        monster.setMonsterData(SKELETON, 2, 10, 11, skeletonLoot);
+        // Fallen require at least level 3 to battle, reward 15 xp, have a daily limit of 12, and reward 355 gold
+        Loot[] memory fallenLoot = new Loot[](1);
+        fallenLoot[0] = Loot(address(gold), 0, 355);
+        monster.setMonsterData(FALLEN, 3, 15, 12, fallenLoot);
+        // Andariel requires at least level 8 to battle, reward 50 xp, have a daily limit of 1, and rewards 9000 Gold and 1 Gull Dagger and 1 SIGONS_VISOR and 1 SIGONS_GUARD
+        Loot[] memory andarielLoot = new Loot[](4);
+        andarielLoot[0] = Loot(address(itemNFT), GULL_DAGGER, 1);
+        andarielLoot[1] = Loot(address(itemNFT), SIGONS_VISOR, 1);
+        andarielLoot[2] = Loot(address(itemNFT), SIGONS_GUARD, 1);
+        andarielLoot[3] = Loot(address(gold), 0, 9000);
+        monster.setMonsterData(ANDARIEL, 8, 50, 1, andarielLoot);
     }
+
+    /**
+     * @dev Test Addresses are not address(0)
+     */
+    function testFailContractAddress() public {
+        assertEq(address(characterNFT), address(0));
+        assertEq(address(gold), address(0));
+        assertEq(address(characterNFTManager), address(0));
+        assertEq(address(characterNFTTokenURI), address(0));
+        assertEq(address(itemNFT), address(0));
+        assertEq(address(itemNFTTokenURI), address(0));
+    }
+
+    /**
+     * Begin CharacterNFT contract test cases
+     */
 
     /**
      * @dev Test CharacterNFT.mint()
@@ -297,16 +354,12 @@ contract GameTest is Test {
     }
 
     /**
-     * @dev Test Addresses are not address(0)
+     * End CharacterNFT contract test cases
      */
-    function testFailContractAddress() public {
-        assertEq(address(characterNFT), address(0));
-        assertEq(address(gold), address(0));
-        assertEq(address(characterNFTManager), address(0));
-        assertEq(address(characterNFTTokenURI), address(0));
-        assertEq(address(itemNFT), address(0));
-        assertEq(address(itemNFTTokenURI), address(0));
-    }
+
+    /**
+     * Begin NFT URI test cases
+     */
 
     /**
      * @dev Test CharacterNFT.tokenURI()
@@ -338,6 +391,14 @@ contract GameTest is Test {
     //     console.log("erc1155 token URI: ", erc1155TokenURI);
     //     assertEq(erc1155TokenURI, expected);
     // }
+
+    /**
+     * End NFT URI test cases
+     */
+
+    /**
+     * Begin Level contract test cases
+     */
 
     /**
      * @dev Test that base Xp and Level are zero and one respectively
@@ -461,6 +522,14 @@ contract GameTest is Test {
     }
 
     /**
+     * End Level contract test cases
+     */
+
+    /**
+     * Begin Skill contract test cases
+     */
+
+    /**
      * @dev Test user at level 2 can use attacks for level 1 and level 2
      */
     function testCanUseSkill() public {
@@ -506,6 +575,14 @@ contract GameTest is Test {
         uint256 shoutAttackId = 2;
         skillContract.canUseSkill(1, shoutAttackId);
     }
+
+    /**
+     * End Skill contract test cases
+     */
+
+    /**
+     * Begin Akara contract test cases
+     */
 
     /**
      * @dev Test user can purchase health pot from Akara
@@ -623,5 +700,208 @@ contract GameTest is Test {
             gold.approve(address(akara), 1);
          */
         akara.purchase(HEALTH_POT_ID, 1);
+    }
+
+    /**
+     * End Akara contract test cases
+     */
+
+    /**
+     * Begin Monster contract test cases
+     */
+
+    /**
+     * @dev Test user with level 1 character can battle a zombie
+     */
+    function testBattleZombie() public {
+        _mintNft(
+            playerOne,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        // Block.timestamp is zero in Foundry so warm to the future for a more realistic test
+        vm.warp(1707087603);
+        vm.stopPrank();
+        vm.startPrank(playerOne);
+        uint256 userCharTokenId = 1;
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        uint256 balanceOfPlayer = gold.balanceOf(playerOne);
+        assertEq(balanceOfPlayer, 155);
+        uint256 tokenXp = levelContract.getTokenXp(userCharTokenId);
+        assertEq(tokenXp, 5);
+        uint256 todayAsDay = block.timestamp / 1 days;
+        uint256 todayBattleCount = monster.getUserKillCount(
+            playerOne,
+            ZOMBIE,
+            todayAsDay
+        );
+        assertEq(todayBattleCount, 1);
+    }
+
+    /**
+     * @dev Test user with level 1 character can battle a zombie multiple times while staying under the daily limit
+     */
+    function testBattleZombieMultipleTimes() public {
+        _mintNft(
+            playerOne,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        // Block.timestamp is zero in Foundry so warm to the future for a more realistic test
+        vm.warp(1707087603);
+        vm.stopPrank();
+        vm.startPrank(playerOne);
+        uint256 userCharTokenId = 1;
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        uint256 balanceOfPlayer = gold.balanceOf(playerOne);
+        assertEq(balanceOfPlayer, 775);
+        uint256 tokenXp = levelContract.getTokenXp(userCharTokenId);
+        assertEq(tokenXp, 25);
+        uint256 todayAsDay = block.timestamp / 1 days;
+        uint256 todayBattleCount = monster.getUserKillCount(
+            playerOne,
+            ZOMBIE,
+            todayAsDay
+        );
+        assertEq(todayBattleCount, 5);
+    }
+
+    /**
+     * @dev Test user with level 2 character can battle a skeleton
+     */
+    function testBattleSkeleton() public {
+        _mintNft(
+            playerOne,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        // Grant 100 xp, this should result in level 2 with 100 xp
+        levelContract.gainExperience(1, 100);
+        uint256 userCharTokenId = 1;
+        // Block.timestamp is zero in Foundry so warm to the future for a more realistic test
+        vm.warp(1707087603);
+        vm.stopPrank();
+        vm.startPrank(playerOne);
+        monster.battleMonster(SKELETON, userCharTokenId);
+        uint256 balanceOfPlayer = gold.balanceOf(playerOne);
+        assertEq(balanceOfPlayer, 255);
+        uint256 tokenXp = levelContract.getTokenXp(userCharTokenId);
+        assertEq(tokenXp, 110);
+        uint256 todayAsDay = block.timestamp / 1 days;
+        uint256 todayBattleCount = monster.getUserKillCount(
+            playerOne,
+            SKELETON,
+            todayAsDay
+        );
+        assertEq(todayBattleCount, 1);
+    }
+
+    /**
+     * @dev Test user with level 3 character can battle a fallen
+     */
+    function testBattleFallen() public {
+        _mintNft(
+            playerOne,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        // Grant 200 xp, this should result in level 3 with 200 xp
+        levelContract.gainExperience(1, 200);
+        uint256 userCharTokenId = 1;
+        // Block.timestamp is zero in Foundry so warm to the future for a more realistic test
+        vm.warp(1707087603);
+        vm.stopPrank();
+        vm.startPrank(playerOne);
+        monster.battleMonster(FALLEN, userCharTokenId);
+        uint256 balanceOfPlayer = gold.balanceOf(playerOne);
+        assertEq(balanceOfPlayer, 355);
+        uint256 tokenXp = levelContract.getTokenXp(userCharTokenId);
+        assertEq(tokenXp, 215);
+        uint256 todayAsDay = block.timestamp / 1 days;
+        uint256 todayBattleCount = monster.getUserKillCount(
+            playerOne,
+            FALLEN,
+            todayAsDay
+        );
+        assertEq(todayBattleCount, 1);
+    }
+
+    /**
+     * @dev Test user with level 8 character can battle Andariel
+     */
+    function testBattleAndariel() public {
+        _mintNft(
+            playerOne,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        // Grant 700 xp, this should result in level 8 with 700 xp
+        levelContract.gainExperience(1, 700);
+        uint256 userCharTokenId = 1;
+        // Block.timestamp is zero in Foundry so warm to the future for a more realistic test
+        vm.warp(1707087603);
+        vm.stopPrank();
+        vm.startPrank(playerOne);
+        monster.battleMonster(ANDARIEL, userCharTokenId);
+        uint256 balanceOfPlayer = gold.balanceOf(playerOne);
+        assertEq(balanceOfPlayer, 9000);
+        uint256 tokenXp = levelContract.getTokenXp(userCharTokenId);
+        assertEq(tokenXp, 750);
+        uint256 todayAsDay = block.timestamp / 1 days;
+        uint256 todayBattleCount = monster.getUserKillCount(
+            playerOne,
+            ANDARIEL,
+            todayAsDay
+        );
+        assertEq(todayBattleCount, 1);
+    }
+
+    /**
+     * @dev Test user with level 1 cannot battle Andariel
+     */
+    function testFailBattleAndarielLevelOne() public {
+        _mintNft(
+            playerOne,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        // Block.timestamp is zero in Foundry so warm to the future for a more realistic test
+        vm.warp(1707087603);
+        vm.stopPrank();
+        vm.startPrank(playerOne);
+        uint256 userCharTokenId = 1;
+        monster.battleMonster(ANDARIEL, userCharTokenId);
+    }
+
+    /**
+     * @dev Test user cannot battle a monster more than the daily limit
+     */
+    function testFailBattleZombieMoreThanAllowedDailyLimit() public {
+        _mintNft(
+            playerOne,
+            1,
+            uint256(CharacterNFTManager.CharacterClass.BARBARIAN)
+        );
+        // Block.timestamp is zero in Foundry so warm to the future for a more realistic test
+        vm.warp(1707087603);
+        vm.stopPrank();
+        vm.startPrank(playerOne);
+        uint256 userCharTokenId = 1;
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        monster.battleMonster(ZOMBIE, userCharTokenId);
+        // This should fail because the user is trying to battle the zombie more than the daily limit of 10
+        monster.battleMonster(ZOMBIE, userCharTokenId);
     }
 }
