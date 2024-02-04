@@ -21,3 +21,11 @@
 ## SkillTree contract
 
 #### Gaming utility contract for NFT SkillTree
+
+## Akara contract
+
+#### Shop utility contract for purchasing ERC1155 items from an NPC Merchant
+
+## Monster contract
+
+#### Gaming utility contract for battling monsters, gaining xp, loot drops, and daily capped limits
