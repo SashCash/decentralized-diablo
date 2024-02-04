@@ -122,9 +122,7 @@ contract ItemNFT is ERC1155, AccessControl {
         if (id == 0 || to == address(0) || amount == 0) {
             revert InvalidValues();
         }
-        if (_checkValidMint(id, amount) == false) {
-            revert InvalidMint();
-        }
+        _checkValidMint(id, amount);
         itemIdToItemData[id].currentSupply += amount;
         _mint(to, id, amount, "");
     }
@@ -138,9 +136,7 @@ contract ItemNFT is ERC1155, AccessControl {
         if (id == 0 || to == address(0) || amount == 0) {
             revert InvalidValues();
         }
-        if (_checkValidMint(id, amount) == false) {
-            revert InvalidMint();
-        }
+        _checkValidMint(id, amount);
         itemIdToItemData[id].currentSupply += amount;
         _mint(to, id, amount, data);
     }
@@ -160,6 +156,9 @@ contract ItemNFT is ERC1155, AccessControl {
         _burn(from, id, amount);
     }
 
+    /**
+     * @dev Mint a batch of tokens, only a minter can call this function
+     */
     function mintBatch(
         address to,
         uint256[] memory ids,
@@ -169,6 +168,9 @@ contract ItemNFT is ERC1155, AccessControl {
         _mintBatch(to, ids, amounts, data);
     }
 
+    /**
+     * @dev Mint a batch of tokens, only a minter can call this function
+     */
     function mintBatch(
         address to,
         uint256[] memory ids,
@@ -177,6 +179,9 @@ contract ItemNFT is ERC1155, AccessControl {
         _mintBatch(to, ids, amounts, "");
     }
 
+    /**
+     * @dev Burn a batch of tokens, only a burner can call this function
+     */
     function burnBatch(
         address from,
         uint256[] memory ids,
@@ -185,19 +190,21 @@ contract ItemNFT is ERC1155, AccessControl {
         _burnBatch(from, ids, amounts);
     }
 
-    function _checkValidMint(
-        uint256 _id,
-        uint256 _amount
-    ) internal view returns (bool) {
-        ItemData storage itemData = itemIdToItemData[_id];
+    /**
+     * @dev Internal function to check if a mint is valid
+     * Revert if item is not registered
+     * Revert if item is not unlimited supply and current supply + amount > max amount
+     */
+    function _checkValidMint(uint256 _id, uint256 _amount) internal view {
+        ItemData memory itemData = itemIdToItemData[_id];
         if (itemData.registered == false) {
-            return false;
+            revert InvalidMint();
         }
-        if (itemData.unlimitedSupply == false) {
-            if (itemData.currentSupply + _amount > itemData.maxAmount) {
-                return false;
-            }
+        if (
+            itemData.unlimitedSupply == false &&
+            itemData.currentSupply + _amount > itemData.maxAmount
+        ) {
+            revert InvalidMint();
         }
-        return true;
     }
 }
