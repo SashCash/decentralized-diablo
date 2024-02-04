@@ -11,6 +11,7 @@ import {ItemNFT} from "../contracts/erc1155/ItemNFT.sol";
 import {ItemNFTTokenURI} from "../contracts/erc1155/ItemNFTTokenURI.sol";
 import {Level} from "../contracts/leveling/Level.sol";
 import {SkillTree} from "../contracts/skills/SkillTree.sol";
+import {Akara} from "../contracts/merchant/Akara.sol";
 
 contract GameTest is Test {
     // Contracts
@@ -22,11 +23,31 @@ contract GameTest is Test {
     ItemNFTTokenURI public itemNFTTokenURI;
     Level public levelContract;
     SkillTree public skillContract;
+    Akara public akara;
 
     // Accounts
     address public owner;
 
     address public admin;
+
+    address payable public bank;
+
+    address public playerOne;
+
+    // Constants
+    uint256 constant SIGONS_VISOR = 1;
+    uint256 constant SIGONS_GUARD = 2;
+    uint256 constant SIGONS_WRAP = 3;
+    uint256 constant SIGONS_SABOT = 4;
+    uint256 constant SIGONS_GAGE = 5;
+    uint256 constant SIGONS_SHELTER = 6;
+
+    // reserved for future use
+
+    uint256 constant HEALTH_POT_ID = 100;
+    uint256 constant MANA_POT_ID = 101;
+    uint256 constant STAMINA_POT_ID = 102;
+    uint256 constant REJUVINATION_POT_ID = 103;
 
     // Roles
     bytes32 public constant OWNER_ROLE = keccak256("OWNER_ROLE");
@@ -36,8 +57,22 @@ contract GameTest is Test {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     bytes32 public constant UTILITY_ROLE = keccak256("UTILITY_ROLE");
 
+    /**
+     * @dev Internal helper to mint nfts
+     */
+    function _mintNft(address to, uint256 amount, uint256 class) internal {
+        characterNFTManager.mintCharacterPrivate(
+            amount,
+            to,
+            CharacterNFTManager.CharacterClass(class)
+        );
+    }
+
     function setUp() public {
         owner = msg.sender;
+        admin = address(0x123);
+        bank = payable(address(0x456));
+        playerOne = address(0x789);
         vm.startPrank(owner);
         // ERC20 contracts
         gold = new Gold();
@@ -51,25 +86,50 @@ contract GameTest is Test {
         // Utility contracts
         levelContract = new Level();
         skillContract = new SkillTree();
+        akara = new Akara();
         // Initialize upgradeables
         characterNFTManager.initialize(owner);
         characterNFTTokenURI.initialize(owner);
         itemNFTTokenURI.initialize(owner);
         levelContract.initialize(owner);
         skillContract.initialize(owner);
+        akara.initialize(owner);
 
         // Contract setup and connections
+
+        // CharacterNFT setup
         characterNFT.setCharacterNFTManager(address(characterNFTManager));
         characterNFT.setTokenUriContract(address(characterNFTTokenURI));
+        // CharacterNFTManager setup
         characterNFTManager.setCharacterNFT(address(characterNFT));
         characterNFTTokenURI.setCharacterNFT(address(characterNFT));
+        // ItemNFT setup
         itemNFT.setItemNFTTokenURI(address(itemNFTTokenURI));
+        // Level setup
         levelContract.setCharacterNFT(address(characterNFT));
+        // SkillTree setup
         skillContract.setCharacterNFTManager(address(characterNFTManager));
         skillContract.setLevelContract(address(levelContract));
+        // Akara setup
+        akara.setGoldTokenAddress(address(gold));
+        akara.setItemNFTAddress(address(itemNFT));
+        akara.setBank(bank);
 
         // Set up roles
         characterNFT.grantRole(MINTER_ROLE, address(characterNFTManager));
+        itemNFT.grantRole(MINTER_ROLE, address(akara));
+
+        // Setup items
+        itemNFT.setItemData(SIGONS_VISOR, 10, false, true);
+        itemNFT.setItemData(SIGONS_GUARD, 10, false, true);
+        itemNFT.setItemData(SIGONS_WRAP, 10, false, true);
+        itemNFT.setItemData(SIGONS_SABOT, 10, false, true);
+        itemNFT.setItemData(SIGONS_GAGE, 10, false, true);
+        itemNFT.setItemData(SIGONS_SHELTER, 10, false, true);
+        itemNFT.setItemData(HEALTH_POT_ID, 100000, true, true);
+        itemNFT.setItemData(MANA_POT_ID, 100000, true, true);
+        itemNFT.setItemData(STAMINA_POT_ID, 100000, true, true);
+        itemNFT.setItemData(REJUVINATION_POT_ID, 100000, true, true);
 
         // setup characterNFT class images
         characterNFT.updateClassImages(
@@ -103,7 +163,7 @@ contract GameTest is Test {
 
         // setup itemNFT attributes
         itemNFTTokenURI.setItemAttributes(
-            1,
+            SIGONS_VISOR,
             ItemNFTTokenURI.ItemAttributes(
                 "Sigons Visor",
                 "Sigons Complete Steel",
@@ -113,7 +173,7 @@ contract GameTest is Test {
             )
         );
         itemNFTTokenURI.setItemAttributes(
-            2,
+            SIGONS_GUARD,
             ItemNFTTokenURI.ItemAttributes(
                 "Sigons Guard",
                 "Sigons Complete Steel",
@@ -123,7 +183,7 @@ contract GameTest is Test {
             )
         );
         itemNFTTokenURI.setItemAttributes(
-            3,
+            SIGONS_WRAP,
             ItemNFTTokenURI.ItemAttributes(
                 "Sigons Wrap",
                 "Sigons Complete Steel",
@@ -133,7 +193,7 @@ contract GameTest is Test {
             )
         );
         itemNFTTokenURI.setItemAttributes(
-            4,
+            SIGONS_SABOT,
             ItemNFTTokenURI.ItemAttributes(
                 "Sigons Sabot",
                 "Sigons Complete Steel",
@@ -143,7 +203,7 @@ contract GameTest is Test {
             )
         );
         itemNFTTokenURI.setItemAttributes(
-            5,
+            SIGONS_GAGE,
             ItemNFTTokenURI.ItemAttributes(
                 "Sigons Gage",
                 "Sigons Complete Steel",
@@ -153,7 +213,7 @@ contract GameTest is Test {
             )
         );
         itemNFTTokenURI.setItemAttributes(
-            6,
+            SIGONS_SHELTER,
             ItemNFTTokenURI.ItemAttributes(
                 "Sigons Shelter",
                 "Sigons Complete Steel",
@@ -162,6 +222,16 @@ contract GameTest is Test {
                 "https://diablo2.wiki.fextralife.com/file/Diablo-2/gothic_plate_armor_diablo2_wiki_guide_196px.png"
             )
         );
+
+        // Setup Akara items
+        // Health Pot cost 10 gold
+        akara.setItemPrice(HEALTH_POT_ID, 10);
+        // Mana Pot cost 10 gold
+        akara.setItemPrice(MANA_POT_ID, 10);
+        // Stamina Pot cost 20 gold
+        akara.setItemPrice(STAMINA_POT_ID, 20);
+        // Rejuvination Pot cost 30 gold
+        akara.setItemPrice(REJUVINATION_POT_ID, 30);
     }
 
     /**
@@ -438,13 +508,120 @@ contract GameTest is Test {
     }
 
     /**
-     * @dev Internal helper to mint nfts
+     * @dev Test user can purchase health pot from Akara
      */
-    function _mintNft(address to, uint256 amount, uint256 class) internal {
-        characterNFTManager.mintCharacterPrivate(
-            amount,
-            to,
-            CharacterNFTManager.CharacterClass(class)
+    function testPurchaseHealthPotFromAkara() public {
+        // Mint 10 gold to playerOne
+        gold.mint(playerOne, 10);
+        vm.stopPrank();
+        vm.startPrank(playerOne);
+        gold.approve(address(akara), 10);
+        akara.purchase(HEALTH_POT_ID, 1);
+        uint256 balanceOfPlayer = gold.balanceOf(playerOne);
+        assertEq(balanceOfPlayer, 0);
+        uint256 balanceOfBank = gold.balanceOf(bank);
+        assertEq(balanceOfBank, 10);
+        uint256 healthPotBalanceOfPlayer = itemNFT.balanceOf(
+            playerOne,
+            HEALTH_POT_ID
         );
+        assertEq(healthPotBalanceOfPlayer, 1);
+    }
+
+    /**
+     * @dev Test user can purchase mana pot from Akara
+     */
+    function testPurchaseManaPotFromAkara() public {
+        // Mint 10 gold to playerOne
+        gold.mint(playerOne, 10);
+        vm.stopPrank();
+        vm.startPrank(playerOne);
+        gold.approve(address(akara), 10);
+        akara.purchase(MANA_POT_ID, 1);
+        uint256 balanceOfPlayer = gold.balanceOf(playerOne);
+        assertEq(balanceOfPlayer, 0);
+        uint256 balanceOfBank = gold.balanceOf(bank);
+        assertEq(balanceOfBank, 10);
+        uint256 manaPotBalanceOfPlayer = itemNFT.balanceOf(
+            playerOne,
+            MANA_POT_ID
+        );
+        assertEq(manaPotBalanceOfPlayer, 1);
+    }
+
+    /**
+     * @dev Test user can purchase multiple health pots from Akara
+     */
+    function testPurchaseMultipleHealthPotsFromAkara() public {
+        // Mint 30 gold to playerOne
+        gold.mint(playerOne, 30);
+        vm.stopPrank();
+        vm.startPrank(playerOne);
+        gold.approve(address(akara), 30);
+        akara.purchase(HEALTH_POT_ID, 3);
+        uint256 balanceOfPlayer = gold.balanceOf(playerOne);
+        assertEq(balanceOfPlayer, 0);
+        uint256 balanceOfBank = gold.balanceOf(bank);
+        assertEq(balanceOfBank, 30);
+        uint256 healthPotBalanceOfPlayer = itemNFT.balanceOf(
+            playerOne,
+            HEALTH_POT_ID
+        );
+        assertEq(healthPotBalanceOfPlayer, 3);
+    }
+
+    /**
+     * @dev Test user can purchase 1 of each pot from Akara
+     */
+    function testPurchaseAllPotsFromAkara() public {
+        // Mint 70 gold to playerOne
+        gold.mint(playerOne, 70);
+        vm.stopPrank();
+        vm.startPrank(playerOne);
+        gold.approve(address(akara), 70);
+        akara.purchase(HEALTH_POT_ID, 1);
+        akara.purchase(MANA_POT_ID, 1);
+        akara.purchase(STAMINA_POT_ID, 1);
+        akara.purchase(REJUVINATION_POT_ID, 1);
+        uint256 balanceOfPlayer = gold.balanceOf(playerOne);
+        assertEq(balanceOfPlayer, 0);
+        uint256 balanceOfBank = gold.balanceOf(bank);
+        // Check that the bank has 70 gold
+        assertEq(balanceOfBank, 70);
+        // Check that the player has 1 health pot
+        assertEq(itemNFT.balanceOf(playerOne, HEALTH_POT_ID), 1);
+        // Check that the player has 1 mana pot
+        assertEq(itemNFT.balanceOf(playerOne, MANA_POT_ID), 1);
+        // Check that the player has 1 stamina pot
+        assertEq(itemNFT.balanceOf(playerOne, STAMINA_POT_ID), 1);
+        // Check that the player has 1 rejuvination pot
+        assertEq(itemNFT.balanceOf(playerOne, REJUVINATION_POT_ID), 1);
+    }
+
+    /**
+     * @dev Test user cant purchase from Akara if they dont have enough gold
+     */
+    function testFailPurchaseFromAkara() public {
+        // Mint 1 gold to playerOne, and try to purchase a health pot
+        gold.mint(playerOne, 1);
+        vm.stopPrank();
+        vm.startPrank(playerOne);
+        gold.approve(address(akara), 1);
+        akara.purchase(HEALTH_POT_ID, 1);
+    }
+
+    /**
+     * @dev Test user cant purchase from Akara because they didnt approve the Akara contract to spend their gold
+     */
+    function testFailNotApprovePurchaseFromAkara() public {
+        // Mint 10 gold to playerOne
+        gold.mint(playerOne, 10);
+        vm.stopPrank();
+        vm.startPrank(playerOne);
+        /**
+            Skip the approve step to test failure
+            gold.approve(address(akara), 1);
+         */
+        akara.purchase(HEALTH_POT_ID, 1);
     }
 }
