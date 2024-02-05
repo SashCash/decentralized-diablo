@@ -31,6 +31,7 @@ export interface CharacterNFTManagerInterface extends Interface {
       | "MINTER_ROLE"
       | "OWNER_ROLE"
       | "PAUSER_ROLE"
+      | "UTILITY_ROLE"
       | "characterNFT"
       | "getRoleAdmin"
       | "grantRole"
@@ -39,6 +40,7 @@ export interface CharacterNFTManagerInterface extends Interface {
       | "mintBatch"
       | "mintCharacterPrivate"
       | "mintCharacterPublic"
+      | "pause"
       | "paused"
       | "pricePerMint"
       | "renounceRole"
@@ -48,6 +50,7 @@ export interface CharacterNFTManagerInterface extends Interface {
       | "supportsInterface"
       | "tokenIdCounter"
       | "tokenIdToCharacterClass"
+      | "unpause"
       | "withdraw"
   ): FunctionFragment;
 
@@ -82,6 +85,10 @@ export interface CharacterNFTManagerInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "UTILITY_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "characterNFT",
     values?: undefined
   ): string;
@@ -113,6 +120,7 @@ export interface CharacterNFTManagerInterface extends Interface {
     functionFragment: "mintCharacterPublic",
     values: [BigNumberish, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "pricePerMint",
@@ -146,6 +154,7 @@ export interface CharacterNFTManagerInterface extends Interface {
     functionFragment: "tokenIdToCharacterClass",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
@@ -160,6 +169,10 @@ export interface CharacterNFTManagerInterface extends Interface {
   decodeFunctionResult(functionFragment: "OWNER_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "PAUSER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "UTILITY_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -182,6 +195,7 @@ export interface CharacterNFTManagerInterface extends Interface {
     functionFragment: "mintCharacterPublic",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "pricePerMint",
@@ -212,6 +226,7 @@ export interface CharacterNFTManagerInterface extends Interface {
     functionFragment: "tokenIdToCharacterClass",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 }
 
@@ -362,6 +377,8 @@ export interface CharacterNFTManager extends BaseContract {
 
   PAUSER_ROLE: TypedContractMethod<[], [string], "view">;
 
+  UTILITY_ROLE: TypedContractMethod<[], [string], "view">;
+
   characterNFT: TypedContractMethod<[], [string], "view">;
 
   getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
@@ -406,6 +423,8 @@ export interface CharacterNFTManager extends BaseContract {
     "payable"
   >;
 
+  pause: TypedContractMethod<[], [void], "nonpayable">;
+
   paused: TypedContractMethod<[], [boolean], "view">;
 
   pricePerMint: TypedContractMethod<[], [bigint], "view">;
@@ -448,6 +467,8 @@ export interface CharacterNFTManager extends BaseContract {
     "view"
   >;
 
+  unpause: TypedContractMethod<[], [void], "nonpayable">;
+
   withdraw: TypedContractMethod<[], [void], "nonpayable">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
@@ -468,6 +489,9 @@ export interface CharacterNFTManager extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "PAUSER_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "UTILITY_ROLE"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "characterNFT"
@@ -518,6 +542,9 @@ export interface CharacterNFTManager extends BaseContract {
     "payable"
   >;
   getFunction(
+    nameOrSignature: "pause"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "paused"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
@@ -552,6 +579,9 @@ export interface CharacterNFTManager extends BaseContract {
   getFunction(
     nameOrSignature: "tokenIdToCharacterClass"
   ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "unpause"
+  ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "withdraw"
   ): TypedContractMethod<[], [void], "nonpayable">;

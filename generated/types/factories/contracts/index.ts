@@ -4,4 +4,8 @@
 export * as erc1155 from "./erc1155";
 export * as erc20 from "./erc20";
 export * as erc721 from "./erc721";
+export * as leveling from "./leveling";
+export * as merchant from "./merchant";
+export * as monster from "./monster";
+export * as skills from "./skills";
 export { BaseHelper__factory } from "./BaseHelper__factory";

@@ -33,9 +33,12 @@ export interface CharacterNFTInterface extends Interface {
       | "approve"
       | "balanceOf"
       | "burn"
-      | "characterClassNames"
       | "characterNFTManagerContract"
+      | "classIdToCharacterData"
       | "getApproved"
+      | "getClassDescription"
+      | "getClassImage"
+      | "getClassName"
       | "getRoleAdmin"
       | "grantRole"
       | "hasRole"
@@ -56,6 +59,8 @@ export interface CharacterNFTInterface extends Interface {
       | "tokenURI"
       | "tokenUriContract"
       | "transferFrom"
+      | "updateClassDescriptions"
+      | "updateClassImages"
       | "updateClassNames"
   ): FunctionFragment;
 
@@ -95,15 +100,27 @@ export interface CharacterNFTInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "burn", values: [BigNumberish]): string;
   encodeFunctionData(
-    functionFragment: "characterClassNames",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "characterNFTManagerContract",
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "classIdToCharacterData",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getApproved",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getClassDescription",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getClassImage",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getClassName",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -181,6 +198,14 @@ export interface CharacterNFTInterface extends Interface {
     values: [AddressLike, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateClassDescriptions",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateClassImages",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateClassNames",
     values: [BigNumberish, string]
   ): string;
@@ -202,15 +227,27 @@ export interface CharacterNFTInterface extends Interface {
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "characterClassNames",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "characterNFTManagerContract",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "classIdToCharacterData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getApproved",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getClassDescription",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getClassImage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getClassName",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -264,6 +301,14 @@ export interface CharacterNFTInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateClassDescriptions",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateClassImages",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -449,15 +494,31 @@ export interface CharacterNFT extends BaseContract {
 
   burn: TypedContractMethod<[tokenId: BigNumberish], [void], "nonpayable">;
 
-  characterClassNames: TypedContractMethod<
+  characterNFTManagerContract: TypedContractMethod<[], [string], "view">;
+
+  classIdToCharacterData: TypedContractMethod<
     [arg0: BigNumberish],
+    [
+      [string, string, string] & {
+        className: string;
+        classImage: string;
+        classDescription: string;
+      }
+    ],
+    "view"
+  >;
+
+  getApproved: TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
+
+  getClassDescription: TypedContractMethod<
+    [tokenId: BigNumberish],
     [string],
     "view"
   >;
 
-  characterNFTManagerContract: TypedContractMethod<[], [string], "view">;
+  getClassImage: TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
 
-  getApproved: TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
+  getClassName: TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
 
   getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
 
@@ -556,6 +617,18 @@ export interface CharacterNFT extends BaseContract {
     "nonpayable"
   >;
 
+  updateClassDescriptions: TypedContractMethod<
+    [classEnumValue: BigNumberish, classDescriptions: string],
+    [void],
+    "nonpayable"
+  >;
+
+  updateClassImages: TypedContractMethod<
+    [classEnumValue: BigNumberish, classImages: string],
+    [void],
+    "nonpayable"
+  >;
+
   updateClassNames: TypedContractMethod<
     [classEnumValue: BigNumberish, classNames: string],
     [void],
@@ -592,13 +665,32 @@ export interface CharacterNFT extends BaseContract {
     nameOrSignature: "burn"
   ): TypedContractMethod<[tokenId: BigNumberish], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "characterClassNames"
-  ): TypedContractMethod<[arg0: BigNumberish], [string], "view">;
-  getFunction(
     nameOrSignature: "characterNFTManagerContract"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "classIdToCharacterData"
+  ): TypedContractMethod<
+    [arg0: BigNumberish],
+    [
+      [string, string, string] & {
+        className: string;
+        classImage: string;
+        classDescription: string;
+      }
+    ],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "getApproved"
+  ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
+  getFunction(
+    nameOrSignature: "getClassDescription"
+  ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
+  getFunction(
+    nameOrSignature: "getClassImage"
+  ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
+  getFunction(
+    nameOrSignature: "getClassName"
   ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
   getFunction(
     nameOrSignature: "getRoleAdmin"
@@ -710,6 +802,20 @@ export interface CharacterNFT extends BaseContract {
     nameOrSignature: "transferFrom"
   ): TypedContractMethod<
     [from: AddressLike, to: AddressLike, tokenId: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "updateClassDescriptions"
+  ): TypedContractMethod<
+    [classEnumValue: BigNumberish, classDescriptions: string],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "updateClassImages"
+  ): TypedContractMethod<
+    [classEnumValue: BigNumberish, classImages: string],
     [void],
     "nonpayable"
   >;

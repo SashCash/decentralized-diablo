@@ -55,16 +55,19 @@ export interface ItemNFTTokenURIInterface extends Interface {
       | "MINTER_ROLE"
       | "OWNER_ROLE"
       | "PAUSER_ROLE"
+      | "UTILITY_ROLE"
       | "getRoleAdmin"
       | "grantRole"
       | "hasRole"
       | "initialize"
       | "itemIdToURI"
+      | "pause"
       | "paused"
       | "renounceRole"
       | "revokeRole"
-      | "setItemURI"
+      | "setItemAttributes"
       | "supportsInterface"
+      | "unpause"
       | "uri"
   ): FunctionFragment;
 
@@ -100,6 +103,10 @@ export interface ItemNFTTokenURIInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "UTILITY_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [BytesLike]
   ): string;
@@ -119,6 +126,7 @@ export interface ItemNFTTokenURIInterface extends Interface {
     functionFragment: "itemIdToURI",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
@@ -129,13 +137,14 @@ export interface ItemNFTTokenURIInterface extends Interface {
     values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "setItemURI",
+    functionFragment: "setItemAttributes",
     values: [BigNumberish, ItemNFTTokenURI.ItemAttributesStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
 
   decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
@@ -153,6 +162,10 @@ export interface ItemNFTTokenURIInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "UTILITY_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
@@ -163,17 +176,22 @@ export interface ItemNFTTokenURIInterface extends Interface {
     functionFragment: "itemIdToURI",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "setItemURI", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setItemAttributes",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
 }
 
@@ -343,6 +361,8 @@ export interface ItemNFTTokenURI extends BaseContract {
 
   PAUSER_ROLE: TypedContractMethod<[], [string], "view">;
 
+  UTILITY_ROLE: TypedContractMethod<[], [string], "view">;
+
   getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
 
   grantRole: TypedContractMethod<
@@ -377,6 +397,8 @@ export interface ItemNFTTokenURI extends BaseContract {
     "view"
   >;
 
+  pause: TypedContractMethod<[], [void], "nonpayable">;
+
   paused: TypedContractMethod<[], [boolean], "view">;
 
   renounceRole: TypedContractMethod<
@@ -391,7 +413,7 @@ export interface ItemNFTTokenURI extends BaseContract {
     "nonpayable"
   >;
 
-  setItemURI: TypedContractMethod<
+  setItemAttributes: TypedContractMethod<
     [
       itemId: BigNumberish,
       itemAttributes: ItemNFTTokenURI.ItemAttributesStruct
@@ -405,6 +427,8 @@ export interface ItemNFTTokenURI extends BaseContract {
     [boolean],
     "view"
   >;
+
+  unpause: TypedContractMethod<[], [void], "nonpayable">;
 
   uri: TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
 
@@ -426,6 +450,9 @@ export interface ItemNFTTokenURI extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "PAUSER_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "UTILITY_ROLE"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "getRoleAdmin"
@@ -463,6 +490,9 @@ export interface ItemNFTTokenURI extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "pause"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "paused"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
@@ -480,7 +510,7 @@ export interface ItemNFTTokenURI extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "setItemURI"
+    nameOrSignature: "setItemAttributes"
   ): TypedContractMethod<
     [
       itemId: BigNumberish,
@@ -492,6 +522,9 @@ export interface ItemNFTTokenURI extends BaseContract {
   getFunction(
     nameOrSignature: "supportsInterface"
   ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "unpause"
+  ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "uri"
   ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;

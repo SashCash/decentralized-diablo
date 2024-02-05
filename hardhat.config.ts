@@ -7,8 +7,11 @@ import "@openzeppelin/hardhat-upgrades";
 import "hardhat-deploy";
 
 // Tasks
-import "./src/deploy/deploy-contract";
-import "./src/deploy/upgrade-contract";
+import "./src/deploy/deploy-upgradeables";
+import "./src/deploy/upgrade-contracts";
+import "./src/deploy/deploy-tokens";
+import "./src/deploy/grant-roles";
+import "./src/deploy/contract-setup";
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -37,11 +40,26 @@ const config: HardhatUserConfig = {
       url: String(process.env.INFURA_RPC_URL),
       accounts: [String(process.env.PRIVATE_KEY)],
     },
+    arbSepolia: {
+      url: String(process.env.INFURA_ARB_SEP_RPC_URL),
+      accounts: [String(process.env.PRIVATE_KEY)],
+    },
   },
   etherscan: {
     apiKey: {
       sepolia: String(process.env.ETHERSCAN_SEP_API_KEY),
+      arbSepolia: String(process.env.ETHERSCAN_ARB_SEP_API_KEY),
     },
+    customChains: [
+      {
+        network: "arbSepolia",
+        chainId: 421614,
+        urls: {
+          apiURL: "https://api-sepolia.arbiscan.io/api",
+          browserURL: "https://sepolia.arbiscan.io/",
+        },
+      },
+    ],
   },
 };
 

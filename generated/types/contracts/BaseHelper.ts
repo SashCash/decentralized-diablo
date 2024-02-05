@@ -31,13 +31,16 @@ export interface BaseHelperInterface extends Interface {
       | "MINTER_ROLE"
       | "OWNER_ROLE"
       | "PAUSER_ROLE"
+      | "UTILITY_ROLE"
       | "getRoleAdmin"
       | "grantRole"
       | "hasRole"
+      | "pause"
       | "paused"
       | "renounceRole"
       | "revokeRole"
       | "supportsInterface"
+      | "unpause"
   ): FunctionFragment;
 
   getEvent(
@@ -71,6 +74,10 @@ export interface BaseHelperInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "UTILITY_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [BytesLike]
   ): string;
@@ -82,6 +89,7 @@ export interface BaseHelperInterface extends Interface {
     functionFragment: "hasRole",
     values: [BytesLike, AddressLike]
   ): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
@@ -95,6 +103,7 @@ export interface BaseHelperInterface extends Interface {
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
@@ -111,11 +120,16 @@ export interface BaseHelperInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "UTILITY_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
@@ -126,6 +140,7 @@ export interface BaseHelperInterface extends Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 }
 
 export namespace InitializedEvent {
@@ -275,6 +290,8 @@ export interface BaseHelper extends BaseContract {
 
   PAUSER_ROLE: TypedContractMethod<[], [string], "view">;
 
+  UTILITY_ROLE: TypedContractMethod<[], [string], "view">;
+
   getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
 
   grantRole: TypedContractMethod<
@@ -288,6 +305,8 @@ export interface BaseHelper extends BaseContract {
     [boolean],
     "view"
   >;
+
+  pause: TypedContractMethod<[], [void], "nonpayable">;
 
   paused: TypedContractMethod<[], [boolean], "view">;
 
@@ -309,6 +328,8 @@ export interface BaseHelper extends BaseContract {
     "view"
   >;
 
+  unpause: TypedContractMethod<[], [void], "nonpayable">;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -329,6 +350,9 @@ export interface BaseHelper extends BaseContract {
     nameOrSignature: "PAUSER_ROLE"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "UTILITY_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "getRoleAdmin"
   ): TypedContractMethod<[role: BytesLike], [string], "view">;
   getFunction(
@@ -345,6 +369,9 @@ export interface BaseHelper extends BaseContract {
     [boolean],
     "view"
   >;
+  getFunction(
+    nameOrSignature: "pause"
+  ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "paused"
   ): TypedContractMethod<[], [boolean], "view">;
@@ -365,6 +392,9 @@ export interface BaseHelper extends BaseContract {
   getFunction(
     nameOrSignature: "supportsInterface"
   ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "unpause"
+  ): TypedContractMethod<[], [void], "nonpayable">;
 
   getEvent(
     key: "Initialized"
