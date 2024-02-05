@@ -24,7 +24,7 @@ contract CharacterNFTManager is BaseHelper {
     // Track the character class of each token ID
     mapping(uint256 => CharacterClass) public tokenIdToCharacterClass;
     // Price per mint
-    uint256 public pricePerMint = 0.00001 ether;
+    uint256 public pricePerMint;
     // CharacterNFT contract
     address public characterNFT;
 
