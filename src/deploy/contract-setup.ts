@@ -56,6 +56,7 @@ const contractSetup = async (hre: HardhatRuntimeEnvironment) => {
 
   // Setup all the contracts
   console.log("Setting up contracts...");
+
   // Setup CharacterNFT
   let tx = await characterNft.setCharacterNFTManager(
     addresses.arbSepolia.characterNFTManager
@@ -65,22 +66,27 @@ const contractSetup = async (hre: HardhatRuntimeEnvironment) => {
     addresses.arbSepolia.characterNFTTokenURI
   );
   await tx.wait();
+
   // Setup CharacterNFTManager
   tx = await characterNFTManager.setCharacterNFT(
     addresses.arbSepolia.characterNFT
   );
   await tx.wait();
+
   // Setup CharacterNFTTokenURI
   tx = await characterNFTTokenURI.setCharacterNFT(
     addresses.arbSepolia.characterNFT
   );
   await tx.wait();
+
   // Setup ItemNFT
   tx = await itemNft.setItemNFTTokenURI(addresses.arbSepolia.itemNFTTokenURI);
   await tx.wait();
+
   // Setup Level
   tx = await level.setCharacterNFT(addresses.arbSepolia.characterNFT);
   await tx.wait();
+
   // Setup SkillTree
   tx = await skillTree.setCharacterNFTManager(
     addresses.arbSepolia.characterNFTManager
@@ -88,11 +94,13 @@ const contractSetup = async (hre: HardhatRuntimeEnvironment) => {
   await tx.wait();
   tx = await skillTree.setLevelContract(addresses.arbSepolia.level);
   await tx.wait();
+
   // Setup Akara
   tx = await akara.setGoldTokenAddress(addresses.arbSepolia.gold);
   await tx.wait();
   tx = await akara.setItemNFTAddress(addresses.arbSepolia.itemNFT);
   await tx.wait();
+
   // Setup Monster
   tx = await monster.setItemNFT(addresses.arbSepolia.itemNFT);
   await tx.wait();
@@ -102,6 +110,7 @@ const contractSetup = async (hre: HardhatRuntimeEnvironment) => {
   await tx.wait();
   tx = await monster.setLevelContractAddress(addresses.arbSepolia.level);
   await tx.wait();
+
   console.log("Successfully set up contracts");
 };
 

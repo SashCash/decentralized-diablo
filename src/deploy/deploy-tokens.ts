@@ -20,11 +20,13 @@ const deployAllTokenContracts = async (hre: HardhatRuntimeEnvironment) => {
   const characterNft = await characterNftFactory.deploy();
   await characterNft.waitForDeployment();
   console.log("CharacterNFT deployed to: ", await characterNft.getAddress());
+
   // Deploy ItemNFT ERC1155 Token contract
   const itemNftFactory = new ItemNFT__factory(deployer);
   const itemNft = await itemNftFactory.deploy();
   await itemNft.waitForDeployment();
   console.log("ItemNFT deployed to: ", await itemNft.getAddress());
+
   // Deploy Gold ERC20 Token contract
   const goldFactory = new Gold__factory(deployer);
   const gold = await goldFactory.deploy();
