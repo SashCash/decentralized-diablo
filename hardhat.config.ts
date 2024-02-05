@@ -9,6 +9,7 @@ import "hardhat-deploy";
 // Tasks
 import "./src/deploy/deploy-upgradeables";
 import "./src/deploy/upgrade-contract";
+import "./src/deploy/deploy-tokens";
 
 const config: HardhatUserConfig = {
   solidity: {
