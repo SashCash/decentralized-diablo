@@ -100,6 +100,8 @@ const contractSetup = async (hre: HardhatRuntimeEnvironment) => {
   await tx.wait();
   tx = await akara.setItemNFTAddress(addresses.arbSepolia.itemNFT);
   await tx.wait();
+  tx = await akara.setBank(deployer.address);
+  await tx.wait();
 
   // Setup Monster
   tx = await monster.setItemNFT(addresses.arbSepolia.itemNFT);
