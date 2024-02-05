@@ -123,11 +123,10 @@ const deployAllUpgradeableContracts = async (
   );
 };
 
-task(
-  "deploy-all-upgradeables",
-  "Deploy all tps upgradeable contracts"
-).setAction(async (args, hre) => {
-  console.log("Running HH task");
-  await deployAllUpgradeableContracts(hre);
-  console.log("Successfully ran HH task");
-});
+task("deploy-upgradeables", "Deploy all tps upgradeable contracts").setAction(
+  async (args, hre) => {
+    console.log("Running HH task");
+    await deployAllUpgradeableContracts(hre);
+    console.log("Successfully ran HH task");
+  }
+);
