@@ -54,3 +54,11 @@ Deployed & Verified on Arbitrum Sepolia : `Monster` : [https://sepolia.arbiscan.
 ### To verify a contract
 
 `npx hardhat verify --network arbSepolia YOUR_ADDRESS_HERE`
+
+### To grant all roles needed for game contracts to interact smoothly
+
+`npx hardhat grant-roles --network arbSepolia`
+
+### To setup and connect all game contracts
+
+`npx hardhat contract-setup --network arbSepolia`
