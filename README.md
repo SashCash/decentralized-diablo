@@ -62,3 +62,7 @@ Deployed & Verified on Arbitrum Sepolia : `Monster` : [https://sepolia.arbiscan.
 ### To setup and connect all game contracts
 
 `npx hardhat contract-setup --network arbSepolia`
+
+### To upgrade all proxy contracts
+
+`npx hardhat upgrade-contracts --network arbSepolia`

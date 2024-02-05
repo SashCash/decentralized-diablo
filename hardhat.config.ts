@@ -8,7 +8,7 @@ import "hardhat-deploy";
 
 // Tasks
 import "./src/deploy/deploy-upgradeables";
-import "./src/deploy/upgrade-contract";
+import "./src/deploy/upgrade-contracts";
 import "./src/deploy/deploy-tokens";
 import "./src/deploy/grant-roles";
 import "./src/deploy/contract-setup";
