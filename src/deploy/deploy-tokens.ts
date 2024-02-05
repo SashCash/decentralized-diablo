@@ -1,4 +1,3 @@
-import { ethers } from "hardhat";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import {
   CharacterNFT__factory,
