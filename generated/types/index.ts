@@ -72,3 +72,11 @@ export type { CharacterNFTManager } from "./contracts/erc721/CharacterNFTManager
 export { CharacterNFTManager__factory } from "./factories/contracts/erc721/CharacterNFTManager__factory";
 export type { CharacterNFTTokenURI } from "./contracts/erc721/CharacterNFTTokenURI";
 export { CharacterNFTTokenURI__factory } from "./factories/contracts/erc721/CharacterNFTTokenURI__factory";
+export type { Level } from "./contracts/leveling/Level";
+export { Level__factory } from "./factories/contracts/leveling/Level__factory";
+export type { Akara } from "./contracts/merchant/Akara";
+export { Akara__factory } from "./factories/contracts/merchant/Akara__factory";
+export type { Monster } from "./contracts/monster/Monster";
+export { Monster__factory } from "./factories/contracts/monster/Monster__factory";
+export type { SkillTree } from "./contracts/skills/SkillTree";
+export { SkillTree__factory } from "./factories/contracts/skills/SkillTree__factory";

@@ -31,17 +31,20 @@ export interface CharacterNFTTokenURIInterface extends Interface {
       | "MINTER_ROLE"
       | "OWNER_ROLE"
       | "PAUSER_ROLE"
+      | "UTILITY_ROLE"
       | "characterNFT"
       | "getRoleAdmin"
       | "grantRole"
       | "hasRole"
       | "initialize"
+      | "pause"
       | "paused"
       | "renounceRole"
       | "revokeRole"
       | "setCharacterNFT"
       | "supportsInterface"
       | "tokenURI"
+      | "unpause"
   ): FunctionFragment;
 
   getEvent(
@@ -75,6 +78,10 @@ export interface CharacterNFTTokenURIInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "UTILITY_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "characterNFT",
     values?: undefined
   ): string;
@@ -94,6 +101,7 @@ export interface CharacterNFTTokenURIInterface extends Interface {
     functionFragment: "initialize",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
@@ -115,6 +123,7 @@ export interface CharacterNFTTokenURIInterface extends Interface {
     functionFragment: "tokenURI",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
@@ -131,6 +140,10 @@ export interface CharacterNFTTokenURIInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "UTILITY_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "characterNFT",
     data: BytesLike
   ): Result;
@@ -141,6 +154,7 @@ export interface CharacterNFTTokenURIInterface extends Interface {
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
@@ -156,6 +170,7 @@ export interface CharacterNFTTokenURIInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 }
 
 export namespace InitializedEvent {
@@ -305,6 +320,8 @@ export interface CharacterNFTTokenURI extends BaseContract {
 
   PAUSER_ROLE: TypedContractMethod<[], [string], "view">;
 
+  UTILITY_ROLE: TypedContractMethod<[], [string], "view">;
+
   characterNFT: TypedContractMethod<[], [string], "view">;
 
   getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
@@ -326,6 +343,8 @@ export interface CharacterNFTTokenURI extends BaseContract {
     [void],
     "nonpayable"
   >;
+
+  pause: TypedContractMethod<[], [void], "nonpayable">;
 
   paused: TypedContractMethod<[], [boolean], "view">;
 
@@ -355,6 +374,8 @@ export interface CharacterNFTTokenURI extends BaseContract {
 
   tokenURI: TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
 
+  unpause: TypedContractMethod<[], [void], "nonpayable">;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -373,6 +394,9 @@ export interface CharacterNFTTokenURI extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "PAUSER_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "UTILITY_ROLE"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "characterNFT"
@@ -397,6 +421,9 @@ export interface CharacterNFTTokenURI extends BaseContract {
   getFunction(
     nameOrSignature: "initialize"
   ): TypedContractMethod<[initialOwner: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "pause"
+  ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "paused"
   ): TypedContractMethod<[], [boolean], "view">;
@@ -423,6 +450,9 @@ export interface CharacterNFTTokenURI extends BaseContract {
   getFunction(
     nameOrSignature: "tokenURI"
   ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
+  getFunction(
+    nameOrSignature: "unpause"
+  ): TypedContractMethod<[], [void], "nonpayable">;
 
   getEvent(
     key: "Initialized"

@@ -145,6 +145,22 @@ declare module "hardhat/types/runtime" {
       name: "CharacterNFTTokenURI",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CharacterNFTTokenURI__factory>;
+    getContractFactory(
+      name: "Level",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Level__factory>;
+    getContractFactory(
+      name: "Akara",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Akara__factory>;
+    getContractFactory(
+      name: "Monster",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Monster__factory>;
+    getContractFactory(
+      name: "SkillTree",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SkillTree__factory>;
 
     getContractAt(
       name: "AccessControlUpgradeable",
@@ -311,6 +327,26 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.CharacterNFTTokenURI>;
+    getContractAt(
+      name: "Level",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Level>;
+    getContractAt(
+      name: "Akara",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Akara>;
+    getContractAt(
+      name: "Monster",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Monster>;
+    getContractAt(
+      name: "SkillTree",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SkillTree>;
 
     deployContract(
       name: "AccessControlUpgradeable",
@@ -444,6 +480,22 @@ declare module "hardhat/types/runtime" {
       name: "CharacterNFTTokenURI",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.CharacterNFTTokenURI>;
+    deployContract(
+      name: "Level",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Level>;
+    deployContract(
+      name: "Akara",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Akara>;
+    deployContract(
+      name: "Monster",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Monster>;
+    deployContract(
+      name: "SkillTree",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SkillTree>;
 
     deployContract(
       name: "AccessControlUpgradeable",
@@ -610,6 +662,26 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.CharacterNFTTokenURI>;
+    deployContract(
+      name: "Level",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Level>;
+    deployContract(
+      name: "Akara",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Akara>;
+    deployContract(
+      name: "Monster",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Monster>;
+    deployContract(
+      name: "SkillTree",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SkillTree>;
 
     // default types
     getContractFactory(
