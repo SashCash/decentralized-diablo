@@ -7,7 +7,7 @@ import "@openzeppelin/hardhat-upgrades";
 import "hardhat-deploy";
 
 // Tasks
-import "./src/deploy/deploy-contract";
+import "./src/deploy/deploy-upgradeables";
 import "./src/deploy/upgrade-contract";
 
 const config: HardhatUserConfig = {
@@ -33,8 +33,12 @@ const config: HardhatUserConfig = {
     target: "ethers-v6",
   },
   networks: {
-    sepolia: {
+    "sepolia": {
       url: String(process.env.INFURA_RPC_URL),
+      accounts: [String(process.env.PRIVATE_KEY)],
+    },
+    "arb-sepolia": {
+      url: String(process.env.INFURA_ARB_SEP_RPC_URL),
       accounts: [String(process.env.PRIVATE_KEY)],
     },
   },
