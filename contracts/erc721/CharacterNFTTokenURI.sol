@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 
 import "../BaseHelper.sol";
 import "./CharacterNFT.sol";
+import "../leveling/Level.sol";
 
 contract CharacterNFTTokenURI is BaseHelper {
     using Strings for uint256;
@@ -19,6 +20,8 @@ contract CharacterNFTTokenURI is BaseHelper {
     /** VARIABLES **/
 
     address public characterNFT;
+
+    address public levelContractAddress;
 
     /** ERRORS **/
 
@@ -40,6 +43,15 @@ contract CharacterNFTTokenURI is BaseHelper {
     }
 
     /**
+     * @dev Set the address of the Level contract
+     */
+    function setLevelContract(
+        address _levelContract
+    ) public onlyRole(OWNER_ROLE) {
+        levelContractAddress = _levelContract;
+    }
+
+    /**
      * @dev Returns the URI for a given token ID
      */
     function tokenURI(uint256 tokenId) public view returns (string memory) {
@@ -52,9 +64,20 @@ contract CharacterNFTTokenURI is BaseHelper {
     function _createURI(uint256 tokenId) internal view returns (string memory) {
         string memory attributesString = "";
 
+        attributesString = string.concat(
+            _addAttribute(
+                "Character Class",
+                CharacterNFT(characterNFT).getClassName(tokenId)
+            ),
+            ","
+        );
+
+        uint256 level = Level(levelContractAddress).getTokenLevel(tokenId);
+        uint256 xp = Level(levelContractAddress).getTokenXp(tokenId);
+
         Attribute[] memory attributes = new Attribute[](2);
-        attributes[0] = Attribute("SomeTrait1", 123);
-        attributes[1] = Attribute("SomeTrait2", 456);
+        attributes[0] = Attribute("Level", level);
+        attributes[1] = Attribute("Xp", xp);
 
         for (uint256 i = 0; i < attributes.length; i++) {
             if (i == attributes.length - 1) {
