@@ -37,11 +37,13 @@ export interface CharacterNFTTokenURIInterface extends Interface {
       | "grantRole"
       | "hasRole"
       | "initialize"
+      | "levelContractAddress"
       | "pause"
       | "paused"
       | "renounceRole"
       | "revokeRole"
       | "setCharacterNFT"
+      | "setLevelContract"
       | "supportsInterface"
       | "tokenURI"
       | "unpause"
@@ -101,6 +103,10 @@ export interface CharacterNFTTokenURIInterface extends Interface {
     functionFragment: "initialize",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "levelContractAddress",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
@@ -113,6 +119,10 @@ export interface CharacterNFTTokenURIInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setCharacterNFT",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setLevelContract",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -154,6 +164,10 @@ export interface CharacterNFTTokenURIInterface extends Interface {
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "levelContractAddress",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
@@ -163,6 +177,10 @@ export interface CharacterNFTTokenURIInterface extends Interface {
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setCharacterNFT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setLevelContract",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -344,6 +362,8 @@ export interface CharacterNFTTokenURI extends BaseContract {
     "nonpayable"
   >;
 
+  levelContractAddress: TypedContractMethod<[], [string], "view">;
+
   pause: TypedContractMethod<[], [void], "nonpayable">;
 
   paused: TypedContractMethod<[], [boolean], "view">;
@@ -362,6 +382,12 @@ export interface CharacterNFTTokenURI extends BaseContract {
 
   setCharacterNFT: TypedContractMethod<
     [_characterNFT: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setLevelContract: TypedContractMethod<
+    [_levelContract: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -422,6 +448,9 @@ export interface CharacterNFTTokenURI extends BaseContract {
     nameOrSignature: "initialize"
   ): TypedContractMethod<[initialOwner: AddressLike], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "levelContractAddress"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "pause"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
@@ -444,6 +473,9 @@ export interface CharacterNFTTokenURI extends BaseContract {
   getFunction(
     nameOrSignature: "setCharacterNFT"
   ): TypedContractMethod<[_characterNFT: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setLevelContract"
+  ): TypedContractMethod<[_levelContract: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "supportsInterface"
   ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;

@@ -113,6 +113,9 @@ contract GameTest is Test {
         // CharacterNFTManager setup
         characterNFTManager.setCharacterNFT(address(characterNFT));
         characterNFTTokenURI.setCharacterNFT(address(characterNFT));
+        // CharacterNFTTokenURI setup
+        characterNFTTokenURI.setCharacterNFT(address(characterNFT));
+        characterNFTTokenURI.setLevelContract(address(levelContract));
         // ItemNFT setup
         itemNFT.setItemNFTTokenURI(address(itemNFTTokenURI));
         // Level setup

@@ -78,6 +78,7 @@ const contractSetup = async (hre: HardhatRuntimeEnvironment) => {
     addresses.arbSepolia.characterNFT
   );
   await tx.wait();
+  tx = await characterNFTTokenURI.setLevelContract(addresses.arbSepolia.level);
 
   // Setup ItemNFT
   tx = await itemNft.setItemNFTTokenURI(addresses.arbSepolia.itemNFTTokenURI);
