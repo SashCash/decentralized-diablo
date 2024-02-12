@@ -31,41 +31,56 @@ const upgradeAllContracts = async (hre: HardhatRuntimeEnvironment) => {
 
   // Upgrading all the contracts
   console.log("Upgrading contracts...");
+
+  console.log("Upgrading CharacterNFTManager...");
   let tx = await hre.upgrades.upgradeProxy(
     addresses.arbSepolia.characterNFTManager,
     characterNftManagerFactory
   );
-  await tx.wait();
+  await tx.waitForDeployment();
+  console.log("Finished upgrading CharacterNFTManager!");
+  console.log("Upgrading CharacterNFTTokenURI...");
   tx = await hre.upgrades.upgradeProxy(
     addresses.arbSepolia.characterNFTTokenURI,
     characterNftTokenUriFactory
   );
-  await tx.wait();
+  await tx.waitForDeployment();
+  console.log("Finished upgrading CharacterNFTTokenURI!");
+  console.log("Upgrading ItemNFTTokenURI...");
   tx = await hre.upgrades.upgradeProxy(
     addresses.arbSepolia.itemNFTTokenURI,
     itemNftTokenUriFactory
   );
-  await tx.wait();
+  await tx.waitForDeployment();
+  console.log("Finished upgrading ItemNFTTokenURI!");
+  console.log("Upgrading Level...");
   tx = await hre.upgrades.upgradeProxy(
     addresses.arbSepolia.level,
     levelFactory
   );
-  await tx.wait();
+  await tx.waitForDeployment();
+  console.log("Finished upgrading Level!");
+  console.log("Upgrading Akara...");
   tx = await hre.upgrades.upgradeProxy(
     addresses.arbSepolia.akara,
     akaraFactory
   );
-  await tx.wait();
+  await tx.waitForDeployment();
+  console.log("Finished upgrading Akara!");
+  console.log("Upgrading Monster...");
   tx = await hre.upgrades.upgradeProxy(
     addresses.arbSepolia.monster,
     monsterFactory
   );
-  await tx.wait();
+  await tx.waitForDeployment();
+  console.log("Finished upgrading Monster!");
+  console.log("Upgrading SkillTree...");
   tx = await hre.upgrades.upgradeProxy(
     addresses.arbSepolia.skillTree,
     skillTreeFactory
   );
-  await tx.wait();
+  await tx.waitForDeployment();
+  console.log("Finished upgrading SkillTree!");
 
   console.log("Successfully upgraded all contracts");
 };
