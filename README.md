@@ -6,6 +6,8 @@
 
 Barbarian , Paladin, Sorceress, Necromancer, Amazon, Druid, Assassin
 
+10,000 NFTs deployed to testnet Opensea [https://testnets.opensea.io/collection/diablo-8]
+
 > Upgradeable custom Token URI builder : `CharacterNFTTokenURI.sol`
 > Upgradeable custom NFT Manager : `CharacterNFTManager.sol`
 
