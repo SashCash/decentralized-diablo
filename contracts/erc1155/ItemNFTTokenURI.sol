@@ -97,8 +97,8 @@ contract ItemNFTTokenURI is BaseHelper {
             bytes(
                 string(
                     abi.encodePacked(
-                        '{"name": "Item #',
-                        tokenId.toString(),
+                        '{"name": "',
+                        itemAttributes.name,
                         '","image": "',
                         itemAttributes.image,
                         '",',

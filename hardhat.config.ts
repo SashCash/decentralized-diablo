@@ -14,6 +14,8 @@ import "./src/deploy/grant-roles";
 import "./src/deploy/contract-setup";
 import "./src/helpers/mint-collection";
 import "./src/helpers/setup-tokenuri";
+import "./src/helpers/setup-items-tokenuri";
+import "./src/helpers/mint-items";
 
 const config: HardhatUserConfig = {
   solidity: {
